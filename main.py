@@ -12,6 +12,24 @@ apresentacao = 0
 rodando = 1
 conhece = 'sim'
 n_conhece = 'não'
+resp_horosc1 = 'ctz'
+resp_horosc2 = 'n_ctz'
+cond = 0
+
+
+def comandos(update, context):
+    chatid = update.effective_chat.id
+    context.bot.send_message(chatid, 'Tente usar um dos comnandos:')
+    lista_comandos = [
+        '/comandos - Apresenta esta mensagem',
+        '/start - Mensagem inicial',
+        '/sobre - O que é este Bot',
+        '/horoscopo - Apresenta o seu horoscopo do dia',
+        '/voizinha - Vai te imitar com voizinha',
+        '/para_voizinha - Para com a voizinha',
+    ]
+    comandos = '\n'.join(lista_comandos)
+    context.bot.send_message(chatid, comandos)
 
 
 def start(update, context):
@@ -31,26 +49,13 @@ def start(update, context):
     return apresentacao
 
 
-def comandos(update, context):
-    chatid = update.effective_chat.id
-    context.bot.send_message(chatid, 'Tente usar um dos comnandos:')
-    lista_comandos = [
-        '/comandos - Apresenta esta mensagem',
-        '/start - Mensagem inicial',
-        '/sobre - O que é este Bot',
-        '/horoscopo - Apresenta o seu horoscopo do dia',
-        '/vozinha - Vai te imitar com voizinha']
-    comandos = '\n'.join(lista_comandos)
-    context.bot.send_message(chatid, comandos)
-
-
 def horoscopo(update, context):
     gif_horoscopo = 'https://media.giphy.com/media/THUFllpYw5hbSXvs19/giphy.gif'
     context.bot.send_animation(chat_id=update.effective_chat.id, animation=gif_horoscopo, caption='Vamos lá!')
     keyboard = [
         [
-            InlineKeyboardButton("Sim ♓️", callback_data=conhece),
-            InlineKeyboardButton('Não 👽', callback_data=n_conhece)
+            InlineKeyboardButton("Sim ♓️", callback_data=resp_horosc1),
+            InlineKeyboardButton('Não 👽', callback_data=resp_horosc2)
         ]
     ]
     reply_markup = InlineKeyboardMarkup(keyboard)
@@ -79,6 +84,7 @@ def nao(update, context):
 def ctz(update, context):
     query = update.callback_query
     query.answer()
+    query.delete_message()
     gif = 'https://media.giphy.com/media/AjYsTtVxEEBPO/giphy.gif'
     query.bot.send_animation(chat_id=update.effective_chat.id, animation=gif,
                              caption= 'PARE DE LOUCURA, ISSO *NÃO* EXISTE\!\!\!\n👺👺👺👺👺👺👺👺👺',
@@ -102,7 +108,27 @@ def sobre(update, context):
 
 
 def voizinha(update, context):
-    pass
+    global cond
+    cond = 1
+    chatid = update.effective_chat.id
+    context.bot.send_message(chatid, 'Digite algo que eu vou te imitar... \nSe quiser parar digite /paravoizinha')
+
+
+def inicia_voizinha(update, context):
+    if cond == 1:
+        chatid = update.effective_chat.id
+        msg = update.message.text.replace('a', 'i').replace('e', 'i').replace('o', 'i').replace('u', 'i')\
+            .replace('A', 'I').replace('E', 'I').replace('O', 'I').replace('U', 'I')
+        context.bot.send_message(chatid, msg)
+
+
+def para_voizinha(update, context):
+    global cond
+    cond = 0
+    chatid = update.effective_chat.id
+    context.bot.send_message(chatid, 'Vii pirir di ti imitir')
+    img = 'https://i.imgflip.com/2i7wif.jpg'
+    context.bot.send_photo(chatid, img)
 
 
 def main():
@@ -128,8 +154,8 @@ def main():
     horoscopo_handler = ConversationHandler(entry_points=[CommandHandler('horoscopo', horoscopo)],
                                             states={
                                                 apresentacao: [
-                                                    CallbackQueryHandler(ctz, pattern='sim'),
-                                                    CallbackQueryHandler(n_ctz, pattern='não')
+                                                    CallbackQueryHandler(ctz, pattern='ctz'),
+                                                    CallbackQueryHandler(n_ctz, pattern='n_ctz')
                                                 ],
                                                 rodando: [
 
@@ -140,8 +166,10 @@ def main():
     # dispatcher.add_handler(CommandHandler('gif', send_gif))
     dispatcher.add_handler(CommandHandler('sobre', sobre))
     dispatcher.add_handler(horoscopo_handler)
-    dispatcher.add_handler(MessageHandler(Filters.text & ~Filters.command, voizinha))
     dispatcher.add_handler(CommandHandler('comandos', comandos))
+    dispatcher.add_handler(CommandHandler('voizinha', voizinha))
+    dispatcher.add_handler(CommandHandler('paravoizinha', para_voizinha))
+    dispatcher.add_handler(MessageHandler(Filters.text & ~Filters.command, inicia_voizinha))
 
     # Start the bot
     updater.start_polling()
