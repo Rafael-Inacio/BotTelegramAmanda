@@ -95,7 +95,7 @@ def ctz(update, context):
 def n_ctz(update, context):
     query = update.callback_query
     query.answer()
-    query.edit_message_text('Ok. Fica para a próxima.\n♈️ ♉️ ♊️ ♋️ ♌️ ♍️ ♎️ ♏️ ♐️ ♑️ ♒️ ♓️')
+    query.edit_message_text('Ok. Fica para a próxima.\n♈️ ♉️ ♊️ ♋️ ♌️ ♍️ \n♎️ ♏️ ♐️ ♑️ ♒️ ♓️')
 
 # def send_gif(update, context):
 #     gif_link = 'https://media.giphy.com/media/yFQ0ywscgobJK/giphy.gif'
