@@ -1,5 +1,5 @@
 """
-t.me/AmandaS2_bot
+t.me/Princesa_AmandaBot
 """
 import logging
 
