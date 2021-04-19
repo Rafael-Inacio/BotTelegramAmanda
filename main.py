@@ -76,7 +76,7 @@ def nao(update, context):
     query.edit_message_text('QUEEEEEEEEEEEEE?')
     msgs = ['COMO QUE NÃO CONHECE??', 'Vou tentar te ajudar com esse seu erro',
             'A Amanda é uma princesa, ela é linda, *U N I V E R S I T Á R I A*, além de ser muito inteligente,'
-            ' trabalhadora, educada, com bom gosto e de peixe\. 😍 ']
+            ' trabalhadora, educada, com bom gosto e de peixes\. 😍 ']
     for msg in msgs:
         query.bot.send_message(update.effective_chat.id, msg, parse_mode=telegram.constants.PARSEMODE_MARKDOWN_V2)
 
